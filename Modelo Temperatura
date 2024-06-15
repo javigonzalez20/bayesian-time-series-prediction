@@ -1,0 +1,63 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pymc as pm
+
+if __name__ == '__main__':
+
+    x = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
+    y = np.array([16, 20, 22, 22, 20, 16, 11, 9, 8, 9, 11, 13, 16, 20, 22, 22, 20, 16])
+
+    plt.plot(x, y, 'o')
+    plt.title('Evolución de la temperatura media de Málaga')
+    plt.xlabel('Tiempo')
+    plt.ylabel('Temperatura Media')
+    plt.show()
+
+    with pm.Model() as model:
+        # Priors
+        amplitude = pm.HalfNormal('amplitude', sigma=1)
+        frequency = pm.Normal('frequency', mu=0, sigma=1)
+
+        b = pm.Normal('b', mu=200000, sigma=1)  # New parameter
+        noise_sd = pm.HalfNormal('noise_sd', sigma=1)
+
+        # Expected value
+        y_hat = amplitude * pm.math.sin(2 * np.pi * frequency * x)+b
+
+        # Likelihood
+        y_obs = pm.Normal('y_obs', mu=y_hat, sigma=noise_sd, observed=y)
+
+        # Sampling
+        trace = pm.sample(2000, tune=1000)
+
+    pm.plot_trace(trace)
+    plt.show()
+
+    pm.plot_posterior(trace)
+    plt.show()
+
+    # Get posterior samples
+    amplitude_samples = trace.posterior['amplitude'].values
+    frequency_samples = trace.posterior['frequency'].values
+    b_samples = trace.posterior['b'].values
+
+    # Add a new axis to x
+    x_new = x[None, None, :]
+
+    # Generate predicted values
+    y_hat = (amplitude_samples[..., None] * np.sin(2 * np.pi * frequency_samples[..., None] * x_new)) + b_samples[..., None]
+
+    # Compute mean and standard deviation along the first two axes (chains and samples)
+    y_hat_mean = y_hat.mean(axis=(0, 1))
+    y_hat_std = y_hat.std(axis=(0, 1))
+
+    # Plotting
+    plt.figure(figsize=(10, 5))
+    plt.plot(x, y, 'o', label='Observed data')
+    plt.plot(x, y_hat_mean, color='C1', label='Predicted value')
+    plt.fill_between(x, y_hat_mean - 2*y_hat_std, y_hat_mean + 2*y_hat_std, color='C1', alpha=0.3, label='Confidence interval')
+    plt.title('Time Series Bayesian Analysis with PyMC')
+    plt.xlabel('Time')
+    plt.ylabel('Value')
+    plt.legend()
+    plt.show()
