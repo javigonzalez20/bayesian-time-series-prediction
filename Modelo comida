@@ -1,0 +1,63 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pymc as pm
+import os
+
+def logistic(x, beta, alpha):
+    return 1 / (1 + np.exp(beta * x + alpha))
+
+def main():
+    # Obtener la ruta completa del archivo freezer.txt
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, 'freezer.txt')
+
+    # Leer datos de freezer.txt
+    data = np.loadtxt(file_path)
+    x = data[:, 0]
+    y = data[:, 1]
+
+    with pm.Model() as sleep_model:
+        # Create the alpha and beta parameters
+        # Assume a normal distribution
+        alpha = pm.Normal('alpha', mu=0.0, tau=0.05, initval=0.0)
+        beta = pm.Normal('beta', mu=0.0, tau=0.05, initval=0.0)
+        
+        # The sleep probability is modeled as a logistic function
+        p = pm.Deterministic('p', 1. / (1. + pm.math.exp(beta * x + alpha)))
+        
+        # Create the bernoulli parameter which uses observed data to inform the algorithm
+        observed = pm.Bernoulli('obs', p, observed=y)
+        
+        # Using Metropolis Hastings Sampling
+        step = pm.Metropolis()
+        
+        # Draw the specified number of samples with burn-in of 1000
+        sleep_trace = pm.sample(6000, step=step, tune=3000)
+
+    pm.plot_trace(sleep_trace, var_names=['alpha', 'beta'])  # Use plot_trace instead of traceplot
+    alpha_samples = sleep_trace.posterior['alpha'].values
+    beta_samples = sleep_trace.posterior['beta'].values
+
+    # Obtener valores medios de alpha y beta
+    alpha_mean = alpha_samples.mean()
+    beta_mean = beta_samples.mean()
+    
+    # Graficar la probabilidad estimada junto con los datos
+    plt.figure(figsize=(12, 6))
+    plt.scatter(x, y, color='blue', label='Observado')
+    
+    # Calcular la probabilidad estimada en cada punto de tiempo
+    time_est = np.linspace(x.min() - 5, x.max() + 5, 1000)
+    sleep_est = logistic(time_est, beta_mean, alpha_mean)
+    
+    plt.plot(time_est, sleep_est, color='red', label='Probabilidad Estimada')
+    
+    plt.xlabel('Tiempo')
+    plt.ylabel('Probabilidad')
+    plt.title('Probabilidad de Comer en Función del Tiempo')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+if __name__ == '__main__':
+    main()
