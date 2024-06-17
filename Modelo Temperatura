@@ -4,8 +4,14 @@ import pymc as pm
 
 if __name__ == '__main__':
 
-    x = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
-    y = np.array([16, 20, 22, 22, 20, 16, 11, 9, 8, 9, 11, 13, 16, 20, 22, 22, 20, 16])
+    # Obtenemos la ruta completa del archivo temperatura.txt
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, 'temperatura.txt')
+
+    # Leemos datos de temperatura.txt
+    data = np.loadtxt(file_path)
+    x = data[:, 0]
+    y = data[:, 1]
 
     plt.plot(x, y, 'o')
     plt.title('Evolución de la temperatura media de Málaga')
@@ -14,14 +20,14 @@ if __name__ == '__main__':
     plt.show()
 
     with pm.Model() as model:
-        # Priors
+        # a priori
         amplitude = pm.HalfNormal('amplitude', sigma=1)
         frequency = pm.Normal('frequency', mu=0, sigma=1)
 
         b = pm.Normal('b', mu=200000, sigma=1)  # New parameter
         noise_sd = pm.HalfNormal('noise_sd', sigma=1)
 
-        # Expected value
+        # Valor esperado
         y_hat = amplitude * pm.math.sin(2 * np.pi * frequency * x)+b
 
         # Likelihood
@@ -36,22 +42,21 @@ if __name__ == '__main__':
     pm.plot_posterior(trace)
     plt.show()
 
-    # Get posterior samples
+    # obtenemos las distribuciones posteriores
     amplitude_samples = trace.posterior['amplitude'].values
     frequency_samples = trace.posterior['frequency'].values
     b_samples = trace.posterior['b'].values
 
-    # Add a new axis to x
     x_new = x[None, None, :]
 
-    # Generate predicted values
+    #Generamos los valores predichos por el modelo
     y_hat = (amplitude_samples[..., None] * np.sin(2 * np.pi * frequency_samples[..., None] * x_new)) + b_samples[..., None]
 
-    # Compute mean and standard deviation along the first two axes (chains and samples)
+    #computamos la media y la desviacion estandar
     y_hat_mean = y_hat.mean(axis=(0, 1))
     y_hat_std = y_hat.std(axis=(0, 1))
 
-    # Plotting
+    # ploteamos
     plt.figure(figsize=(10, 5))
     plt.plot(x, y, 'o', label='Observed data')
     plt.plot(x, y_hat_mean, color='C1', label='Predicted value')
