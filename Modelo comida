@@ -7,57 +7,62 @@ def logistic(x, beta, alpha):
     return 1 / (1 + np.exp(beta * x + alpha))
 
 def main():
-    # Obtener la ruta completa del archivo freezer.txt
+    # Obtenemos la ruta completa del archivo freezer.txt
     current_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(current_dir, 'freezer.txt')
 
-    # Leer datos de freezer.txt
+    # Leemos datos de freezer.txt
     data = np.loadtxt(file_path)
     x = data[:, 0]
     y = data[:, 1]
 
     with pm.Model() as sleep_model:
-        # Create the alpha and beta parameters
-        # Assume a normal distribution
-        alpha = pm.Normal('alpha', mu=0.0, tau=0.05, initval=0.0)
-        beta = pm.Normal('beta', mu=0.0, tau=0.05, initval=0.0)
+        # Creamos los parámetros alpha y beta
+        # Asumimos una distribución normal
+        alpha = pm.Normal('alpha', mu=0.0, sigma=1.0, initval=0.0)
+        beta = pm.Normal('beta', mu=0.0, sigma=1.0, initval=0.0)
         
-        # The sleep probability is modeled as a logistic function
+        # La probabilidad de estar en ayuna se modela como una función logística
         p = pm.Deterministic('p', 1. / (1. + pm.math.exp(beta * x + alpha)))
         
-        # Create the bernoulli parameter which uses observed data to inform the algorithm
+        # Creamos el parámetro de Bernoulli 
         observed = pm.Bernoulli('obs', p, observed=y)
         
-        # Using Metropolis Hastings Sampling
+        # Usamos Metropolis Hastings Sampling
         step = pm.Metropolis()
         
-        # Draw the specified number of samples with burn-in of 1000
-        sleep_trace = pm.sample(6000, step=step, tune=3000)
+        # burn-in de 1000
+        eat_trace = pm.sample(2000, step=step, tune=1000)
 
-    pm.plot_trace(sleep_trace, var_names=['alpha', 'beta'])  # Use plot_trace instead of traceplot
-    alpha_samples = sleep_trace.posterior['alpha'].values
-    beta_samples = sleep_trace.posterior['beta'].values
+    plt.rcParams.update({'axes.labelsize': 8, 'xtick.labelsize': 8, 'ytick.labelsize': 8, 'font.size': 8})
 
-    # Obtener valores medios de alpha y beta
+    # Trazar  alpha y beta
+    pm.plot_trace(eat_trace, var_names=['alpha', 'beta'])
+    plt.show()  # Mostramos la gráfica de convergencia
+
+    # Obtenenemos los valores medios de alpha y beta
+    alpha_samples = eat_trace.posterior['alpha'].values
+    beta_samples = eat_trace.posterior['beta'].values
     alpha_mean = alpha_samples.mean()
     beta_mean = beta_samples.mean()
     
-    # Graficar la probabilidad estimada junto con los datos
+    # Graficamos la probabilidad estimada 
     plt.figure(figsize=(12, 6))
-    plt.scatter(x, y, color='blue', label='Observado')
     
     # Calcular la probabilidad estimada en cada punto de tiempo
     time_est = np.linspace(x.min() - 5, x.max() + 5, 1000)
-    sleep_est = logistic(time_est, beta_mean, alpha_mean)
+    eat_est = logistic(time_est, beta_mean, alpha_mean)
     
-    plt.plot(time_est, sleep_est, color='red', label='Probabilidad Estimada')
+    plt.plot(time_est, eat_est, color='orange',linewidth=6)
     
-    plt.xlabel('Tiempo')
-    plt.ylabel('Probabilidad')
-    plt.title('Probabilidad de Comer en Función del Tiempo')
+    plt.xlabel('Tiempo (minutos)', fontsize=24)
+    plt.ylabel('Probabilidad', fontsize=24)
+    plt.xticks(fontsize=24)
+    plt.yticks(fontsize=24)
     plt.legend()
-    plt.grid(True)
+    plt.grid(False)
     plt.show()
 
 if __name__ == '__main__':
     main()
+
