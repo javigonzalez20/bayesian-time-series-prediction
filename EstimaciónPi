@@ -1,0 +1,29 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Generamos puntos aleatorios
+np.random.seed(0)
+n_points = 10000
+x = np.random.uniform(-1, 1, n_points)
+y = np.random.uniform(-1, 1, n_points)
+
+# Calculamos las distancias desde el origen
+distances = np.sqrt(x**2 + y**2)
+inside_circle = distances <= 1
+
+# Estimación de pi
+pi_estimate = 4 * np.sum(inside_circle) / n_points
+
+# Gráfico
+plt.figure(figsize=(8, 8))
+plt.scatter(x[inside_circle], y[inside_circle], color='blue', s=1, label='Dentro del Círculo')
+plt.scatter(x[~inside_circle], y[~inside_circle], color='red', s=1, label='Fuera del Círculo')
+plt.xlabel('x',fontsize=24)
+plt.ylabel('y', fontsize=24)
+plt.title(f' {pi_estimate:.4f}',fontsize=20)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+
+plt.grid(False)
+plt.axis('equal')
+plt.show()
