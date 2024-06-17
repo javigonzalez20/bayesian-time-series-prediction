@@ -16,7 +16,7 @@ def main():
     x = data[:, 0]
     y = data[:, 1]
 
-    with pm.Model() as sleep_model:
+    with pm.Model() as eat_model:
         # Creamos los parámetros alpha y beta
         # Asumimos una distribución normal
         alpha = pm.Normal('alpha', mu=0.0, sigma=1.0, initval=0.0)
