@@ -8,7 +8,7 @@ if __name__ == '__main__':
     current_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(current_dir, 'temperatura.txt')
 
-    # Leemos datos de temperatura.txt
+    # Leemos los datos de temperatura.txt
     data = np.loadtxt(file_path)
     x = data[:, 0]
     y = data[:, 1]
