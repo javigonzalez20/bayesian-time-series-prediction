@@ -32,7 +32,6 @@ Each case study includes:
 
 - `/notebooks/` → Jupyter Notebooks for each case study  
 - `Bayesian_Time_Series_TFG.pdf`  → Full thesis  
-- `requirements.txt` → Python libraries needed to run the code  
 - `README.md` → Project overview and documentation  
 - `LICENSE` → Open-source license
 
