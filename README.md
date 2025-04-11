@@ -31,8 +31,7 @@ Each case study includes:
 ## 📁 Repository Structure
 
 - `/notebooks/` → Jupyter Notebooks for each case study  
-- `/data/` → Raw datasets used in the models  
-- `/figures/` → Key result plots and visualizations  
+- `Bayesian_Time_Series_TFG.pdf`  → Full thesis  
 - `requirements.txt` → Python libraries needed to run the code  
 - `README.md` → Project overview and documentation  
 - `LICENSE` → Open-source license
@@ -51,4 +50,4 @@ Feel free to reach out if you'd like to discuss Bayesian modeling, data science,
 
 - 📧 javigonzalezcoin@gmail.com  
 - 💼 [LinkedIn](https://linkedin.com/in/tuusuario)  
-- 💻 [GitHub](https://github.com/tuusuario)
+- 💻 [GitHub] (https://github.com/javigonzalez20)
