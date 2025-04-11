@@ -50,4 +50,4 @@ Feel free to reach out if you'd like to discuss Bayesian modeling, data science,
 
 - 📧 javigonzalezcoin@gmail.com  
 - 💼 [LinkedIn](https://linkedin.com/in/tuusuario)  
-- 💻 [GitHub] (https://github.com/javigonzalez20)
+- 💻 [GitHub](https://github.com/javigonzalez20)
