@@ -49,5 +49,5 @@ Each case study includes:
 Feel free to reach out if you'd like to discuss Bayesian modeling, data science, or this project in more detail:
 
 - 📧 javigonzalezcoin@gmail.com  
-- 💼 [LinkedIn](https://linkedin.com/in/tuusuario)  
+- 💼 [LinkedIn](https://www.linkedin.com/in/javier-jes%C3%BAs-gonz%C3%A1lez-moreno-96a3472b8/)
 - 💻 [GitHub](https://github.com/javigonzalez20)
