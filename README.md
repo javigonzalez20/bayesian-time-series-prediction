@@ -30,13 +30,12 @@ Each case study includes:
 
 ## 📁 Repository Structure
 
-/notebooks/ → Jupyter Notebooks for each case study
-/data/ → Raw datasets used in the models
-/figures/ → Key result plots and visualizations
-requirements.txt → Python libraries needed to run the code
-README.md → Project overview and documentation
-LICENSE → Open-source license
-
+- `/notebooks/` → Jupyter Notebooks for each case study  
+- `/data/` → Raw datasets used in the models  
+- `/figures/` → Key result plots and visualizations  
+- `requirements.txt` → Python libraries needed to run the code  
+- `README.md` → Project overview and documentation  
+- `LICENSE` → Open-source license
 
 ## 🛠 Technologies Used
 
